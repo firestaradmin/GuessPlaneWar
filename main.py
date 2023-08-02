@@ -25,7 +25,7 @@ import sys
 from pygame.locals import QUIT,KEYDOWN
 
 FPS=60
-
+GRID_NUM = 10
 
 color_white=[255,255,255]
 color_red=[255,0,0]
@@ -54,7 +54,10 @@ if __name__ == "__main__":
     pygame.init()
     FPSClock=pygame.time.Clock()
     screen = pygame.display.set_mode((640,480))
-    plane_park = MyPlanePark(screen, [10,10], 200, 10)
+    sideLen = min(screen.get_width(), screen.get_height()) - 100
+    sideLen = int(sideLen/GRID_NUM)*GRID_NUM
+    print(sideLen)
+    plane_park = MyPlanePark(screen, [10,10], 200, GRID_NUM)
     plane_park.update()
     
     while True:
