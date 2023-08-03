@@ -85,6 +85,11 @@ class MyPlanePark():
         self.gridWidth = side_len / gird_num
         print("gridWidth = ", self.gridWidth)
         
+        self.gridList = [[0 for i in range(gird_num)] for j in range(gird_num)]
+        # print(self.gridList)
+        # self.gridList[1][1] = 3
+        # print(self.gridList)
+        
         self.plane1 = MyPlane(self.origin, self.gridWidth, 5,5)
         self.plane2 = MyPlane(self.origin, self.gridWidth, 2,2, heading=Heading.LEFT)
         self.plane3 = MyPlane(self.origin, self.gridWidth, 2,8,heading= Heading.DOWN)
