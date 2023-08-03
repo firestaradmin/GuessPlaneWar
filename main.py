@@ -25,26 +25,52 @@ import sys
 from pygame.locals import QUIT,KEYDOWN
 
 from my_lib import *
-
+from enum import Enum
 
 FPS=60
 GRID_NUM = 10
 
-
+class Heading(Enum):
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
 
 class MyPlane():
-    def __init__(self, map_origin , gridWidth, col, row, hide = False, heading = "up") -> None:
-        self.img = pygame.image.load(rc_plane_up)
+    def __init__(self, map_origin , gridWidth, col, row, hide = False, heading = Heading.UP) -> None:
         self.col = col
         self.row = row
         self.origin = map_origin
         self.gridWidth = gridWidth
         self.hide = hide
+        self.heading = heading
+        match(self.heading):
+            case Heading.UP:
+                self.img = pygame.image.load(rc_plane_up)
+            case Heading.RIGHT:
+                self.img = pygame.image.load(rc_plane_right)
+            case Heading.LEFT:
+                self.img = pygame.image.load(rc_plane_left)
+            case Heading.DOWN:
+                self.img = pygame.image.load(rc_plane_down)
+        
+        
+        
+        
     
     def draw(self, surface:pygame.Surface):
         rect = self.img.get_rect()
         x = self.origin[0] + self.gridWidth*self.col + self.gridWidth/2
-        y = self.origin[1] + self.gridWidth*self.row + self.gridWidth/2 + 6
+        y = self.origin[1] + self.gridWidth*self.row + self.gridWidth/2
+        match(self.heading):
+            case Heading.UP:
+                y += 6
+            case Heading.RIGHT:
+                x -= 6
+            case Heading.LEFT:
+                x += 6
+            case Heading.DOWN:
+                y -= 6
         rect.center = x, y
         surface.blit(self.img, rect)
         
@@ -54,14 +80,14 @@ class MyPlanePark():
         self.origin = origin_pos
         self.sideLen = side_len
         self.girdNum = gird_num
-        self.rect_outline = pygame.Rect(self.origin[0]-1, self.origin[1]-1, self.sideLen+2, self.sideLen+2)
+        self.rect_outline = pygame.Rect(self.origin[0]-1, self.origin[1]-1, self.sideLen+3, self.sideLen+3)
         self.rect = pygame.Rect(self.origin[0], self.origin[1], self.sideLen, self.sideLen)
         self.gridWidth = side_len / gird_num
         print("gridWidth = ", self.gridWidth)
         
         self.plane1 = MyPlane(self.origin, self.gridWidth, 5,5)
-        self.plane2 = MyPlane(self.origin, self.gridWidth, 2,2)
-        self.plane3 = MyPlane(self.origin, self.gridWidth, 2,8)
+        self.plane2 = MyPlane(self.origin, self.gridWidth, 2,2, heading=Heading.LEFT)
+        self.plane3 = MyPlane(self.origin, self.gridWidth, 2,8,heading= Heading.DOWN)
 
     def highlightGrid(self,col,row):
         x = self.origin[0] + self.gridWidth*col
@@ -116,18 +142,18 @@ if __name__ == "__main__":
     sideLen = int((min(screen.get_width(), screen.get_height()) - 100)/GRID_NUM)*GRID_NUM
     pos_leftTop = [(screen.get_size()[0] - sideLen)/2, (screen.get_size()[1] - sideLen)/2]
     plane_park = MyPlanePark(screen, pos_leftTop, sideLen, GRID_NUM)
-
+    col = 0
+    row = 0
     
     while True:
-        col = 0
-        row = 0
+
         pygame.display.update()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEMOTION:
             x,y = event.pos
             col,row = plane_park.getGridPos([x,y])
             print(col,row)
