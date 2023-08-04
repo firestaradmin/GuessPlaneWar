@@ -27,6 +27,8 @@ from pygame.locals import QUIT,KEYDOWN
 from my_lib import *
 from enum import Enum
 
+
+
 FPS=60
 GRID_NUM = 10
 
@@ -133,9 +135,27 @@ class MyPlanePark():
         return (col,row) # x,y
 
 
-
-
-
+class MyTextButton():
+    def __init__(self, surface:pygame.Surface, origin, text = "button" ) -> None:
+        self.padding = 5
+        self.origin = origin
+        self.surface = surface
+        self.text = text
+        self.ui_font = pygame.font.SysFont("Microsoft Yahei", 18)
+        self.txtsurf = self.ui_font.render(self.text, True, color_white)
+        self.textrect = self.txtsurf.get_rect(topleft= (self.origin[0],self.origin[1]))
+        self.rect = pygame.Rect(self.textrect.x - self.padding, 
+                                self.textrect.y - self.padding, 
+                                self.textrect.width + self.padding* 2, 
+                                self.textrect.height + self.padding* 2)
+        
+        
+    def update(self):
+        self.surface.blit(self.txtsurf, self.origin)
+        pygame.draw.rect(self.surface, color_white, self.rect, 2)
+        
+    
+    
 if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption("邹邹的猜飞机大战")
@@ -147,6 +167,7 @@ if __name__ == "__main__":
     sideLen = int((min(screen.get_width(), screen.get_height()) - 100)/GRID_NUM)*GRID_NUM
     pos_leftTop = [(screen.get_size()[0] - sideLen)/2, (screen.get_size()[1] - sideLen)/2]
     plane_park = MyPlanePark(screen, pos_leftTop, sideLen, GRID_NUM)
+    btn = MyTextButton(screen, [10,10], "Start")
     col = 0
     row = 0
     
@@ -168,7 +189,7 @@ if __name__ == "__main__":
         txtsurf = font.render("邹邹的猜飞机大战", True, color_white)
         screen.blit(txtsurf,((screen.get_width() - txtsurf.get_width()) // 2,10))
         
-
+        btn.update()
         
         plane_park.update()
         plane_park.highlightGrid(col,row)
